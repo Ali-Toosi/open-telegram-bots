@@ -13,3 +13,4 @@ __pycache__/
 site/
 .vscode
 db.sqlite3
+.env.prod*

@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    command: python manage.py runserver 0.0.0.0:80
+    volumes:
+      - ./src/:/usr/open-telegram-bots/src/
+    ports:
+      - 80:80
+    env_file:
+      - ./.env.dev
+
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - open_tg_bots_pg_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.dev.db
+
+volumes:
+  open_tg_bots_pg_data:

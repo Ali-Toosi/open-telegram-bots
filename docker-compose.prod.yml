@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: gunicorn opentgbots.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - open_tg_bots_staticfiles:/home/open-telegram-bots/staticfiles
+      - open_tg_bots_mediafiles:/home/open-telegram-bots/mediafiles
+    expose:
+      - 8000
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - open_tg_bots_pg_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.prod.db
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    volumes:
+      - open_tg_bots_staticfiles:/home/open-telegram-bots/staticfiles
+      - open_tg_bots_mediafiles:/home/open-telegram-bots/mediafiles
+    depends_on:
+      - app
+
+volumes:
+  open_tg_bots_pg_data:
+  open_tg_bots_staticfiles:
+  open_tg_bots_mediafiles:
