@@ -1,0 +1,2 @@
+django==3.2.13
+django-tgbot==1.4.9.2
