@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Execute deploy command
       uses: appleboy/ssh-action@master
+      env:
+        env_prod: ${{ secrets.ENV_PROD }}
       with:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
@@ -19,8 +21,8 @@ jobs:
           cd open-telegram-bots/.. || git clone https://github.com/Ali-Toosi/open-telegram-bots.git
           cd open-telegram-bots/ || exit
           git pull
-          rm .env.prod.* > /dev/null
-          rm .env.dev.* > /dev/null
-          echo ${{ secrets.ENV_PROD }} > .env.prod
+          rm .env.prod.*
+          rm .env.dev.*
+          echo $env_prod > .env.prod
           echo ${{ secrets.ENV_PROD_DB }} > .env.prod.db
           echo ${{ secrets.ENV_PROD_ACME_COMPANION }} > .env.prod.acme-companion
