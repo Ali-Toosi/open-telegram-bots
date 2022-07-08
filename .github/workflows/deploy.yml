@@ -16,5 +16,7 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.SSH_KEY }}
         script: |
-          whoami
-          ls -a
+          cd open-telegram-bots/.. || git clone git@github.com:Ali-Toosi/open-telegram-bots.git
+          git pull
+          rm .env.prod.*
+          echo ${{ secrets.USERNAME }} > .env.prod
