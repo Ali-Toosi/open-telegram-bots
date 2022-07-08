@@ -19,5 +19,8 @@ jobs:
           cd open-telegram-bots/.. || git clone https://github.com/Ali-Toosi/open-telegram-bots.git
           cd open-telegram-bots/ || exit
           git pull
-          rm .env.prod.*
-          echo ${{ secrets.USERNAME }} > .env.prod
+          rm .env.prod.* > /dev/null
+          rm .env.dev.* > /dev/null
+          echo ${{ secrets.ENV_PROD }} > .env.prod
+          echo ${{ secrets.ENV_PROD_DB }} > .env.prod.db
+          echo ${{ secrets.ENV_PROD_ACME_COMPANION }} > .env.prod.acme-companion
