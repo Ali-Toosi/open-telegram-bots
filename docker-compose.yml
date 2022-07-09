@@ -14,9 +14,9 @@ services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - open_tg_bots_pg_data:/var/lib/postgresql/data/
+      - open_telegram_bots_pg_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.dev.db
 
 volumes:
-  open_tg_bots_pg_data:
+  open_telegram_bots_pg_data:

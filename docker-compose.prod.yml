@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile.prod
     command: gunicorn opentgbots.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - open_tg_bots_staticfiles:/home/open-telegram-bots/staticfiles
-      - open_tg_bots_mediafiles:/home/open-telegram-bots/mediafiles
+      - open_telegram_bots_staticfiles:/home/open-telegram-bots/staticfiles
+      - open_telegram_bots_mediafiles:/home/open-telegram-bots/mediafiles
     expose:
       - 8000
     env_file:
@@ -19,21 +19,45 @@ services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - open_tg_bots_pg_data:/var/lib/postgresql/data/
+      - open_telegram_bots_pg_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.prod.db
 
-  nginx:
+  nginx-proxy:
+    container_name: nginx-proxy
     build: ./nginx
+    restart: always
     ports:
+      - 443:443
       - 80:80
     volumes:
-      - open_tg_bots_staticfiles:/home/open-telegram-bots/staticfiles
-      - open_tg_bots_mediafiles:/home/open-telegram-bots/mediafiles
+      - open_telegram_bots_staticfiles:/home/open-telegram-bots/staticfiles
+      - open_telegram_bots_mediafiles:/home/open-telegram-bots/mediafiles
+      - open_telegram_bots_certs:/etc/nginx/certs
+      - open_telegram_bots_html:/usr/share/nginx/html
+      - open_telegram_bots_vhost:/etc/nginx/vhost.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
     depends_on:
       - app
 
+  nginx-proxy-letsencrypt:
+    image: nginxproxy/acme-companion
+    env_file:
+      - ./.env.dev.acme-companion
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - open_telegram_bots_certs:/etc/nginx/certs
+      - open_telegram_bots_html:/usr/share/nginx/html
+      - open_telegram_bots_vhost:/etc/nginx/vhost.d
+      - open_telegram_bots_acme:/etc/acme.sh
+    depends_on:
+      - nginx-proxy
+
 volumes:
-  open_tg_bots_pg_data:
-  open_tg_bots_staticfiles:
-  open_tg_bots_mediafiles:
+  open_telegram_bots_pg_data:
+  open_telegram_bots_staticfiles:
+  open_telegram_bots_mediafiles:
+  open_telegram_bots_certs:
+  open_telegram_bots_html:
+  open_telegram_bots_vhost:
+  open_telegram_bots_acme:
