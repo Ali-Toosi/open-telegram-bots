@@ -18,4 +18,3 @@ class TelegramState(AbstractTelegramState):
 
     class Meta:
         unique_together = ('telegram_user', 'telegram_chat')
-
