@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import CASCADE
+from django.db.models import CASCADE, SET_NULL
 
 from django_tgbot.models import AbstractTelegramUser, AbstractTelegramChat, AbstractTelegramState
 
@@ -18,3 +18,10 @@ class TelegramState(AbstractTelegramState):
 
     class Meta:
         unique_together = ('telegram_user', 'telegram_chat')
+
+
+class ChatWebhook(models.Model):
+    tg_user = models.ForeignKey(TelegramUser, related_name='chat_webhooks', on_delete=SET_NULL, null=True)
+    tg_chat = models.ForeignKey(TelegramChat, related_name='chat_webhooks', on_delete=CASCADE)
+    token = models.TextField(max_length=32, unique=True)
+    last_used = models.DateTimeField(blank=True, null=True)

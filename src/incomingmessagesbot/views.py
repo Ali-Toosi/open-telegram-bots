@@ -1,10 +1,13 @@
 from django.conf import settings
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from .bot import bot
 from django_tgbot.types.update import Update
 
 import logging
+
+from .models import ChatWebhook
 
 
 @csrf_exempt
@@ -21,7 +24,7 @@ def handle_bot_request(request):
         bot.handle_update(update)
     except Exception as e:
         if settings.DEBUG:
-            raise e
+            print(e)
         else:
             logging.exception(e)
     return HttpResponse("OK")
@@ -34,3 +37,13 @@ def poll_updates(request):
     """
     count = bot.poll_updates_and_handle()
     return HttpResponse(f"Processed {count} update{'' if count == 1 else 's'}.")
+
+
+@csrf_exempt
+def incoming_message(request, token):
+    webhook = get_object_or_404(ChatWebhook, token=token)
+    text = request.POST.get('message', None)
+    if text is None:
+        return HttpResponse("Empty message.", status=400)
+    bot.sendMessage(webhook.tg_chat.telegram_id, text)
+    return HttpResponse("OK")

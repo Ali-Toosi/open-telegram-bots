@@ -129,6 +129,8 @@ STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR.parent / 'mediafiles'
 
+DOMAIN_NAME = os.environ.get('DOMAIN_NAME')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
